@@ -53,16 +53,17 @@ namespace MoviesMafia.Models.Repo
                     var verificationUrl = $"http://moviesmafia.ga/Account/VerifyEmail?email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(token)}";
                     using (MailMessage mail = new MailMessage())
                     {
-                        mail.From = new MailAddress("moviesmafiaaa@gmail.com");
+                        mail.From = new MailAddress("admin@moviesmafia.ga");
                         mail.To.Add(model.Email);
                         mail.Subject = "Verify your email address";
                         mail.Body = $"Please click the following link to verify your email address: {verificationUrl}";
                         
                         
 
-                        using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                        using (SmtpClient smtp = new SmtpClient("live.smtp.mailtrap.io", 587))
                         {
-                            smtp.Credentials = new NetworkCredential("moviesmafiaaa@gmail.com", "jmhswshiiyubnjxk");
+                            smtp.UseDefaultCredentials = false;
+                            smtp.Credentials = new NetworkCredential("api", "15ae06ca69c50761268d7bd63c110c20");
                             smtp.EnableSsl = true;
                             smtp.Send(mail);
                         }
