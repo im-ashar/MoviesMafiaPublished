@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MoviesMafia.Models.GenericRepo;
 using MoviesMafia.Models.Repo;
 using System.Security.Claims;
@@ -117,7 +118,7 @@ namespace MoviesMafia.Controllers
             var ProfilePicturePath = _userRepo.GetUserProfilePicture(User.Identity.Name);
             var extension = Path.GetExtension(ProfilePicturePath);
             ViewBag.ProfilePicturePath = User.Identity.Name + extension;
-            var movie = new GenericRecordsDB<Records>(new RecordsDBContext());
+            var movie = new GenericRecordsDB<Records>(new RecordsDBContext(new DbContextOptions<RecordsDBContext>()));
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var list = movie.GetByUserId(userId);
             var tuple = new Tuple<List<Records>, UpdateUserModel>(list, new UpdateUserModel());
@@ -130,7 +131,7 @@ namespace MoviesMafia.Controllers
         {
             ViewBag.EmailData = _userRepo.GetUserEmail(User.Identity.Name);
             Records del = System.Text.Json.JsonSerializer.Deserialize<Records>(deleteButton);
-            var delete = new GenericRecordsDB<Records>(new RecordsDBContext());
+            var delete = new GenericRecordsDB<Records>(new RecordsDBContext(new DbContextOptions<RecordsDBContext>()));
             delete.Delete(del);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var list = delete.GetByUserId(userId);
@@ -150,7 +151,7 @@ namespace MoviesMafia.Controllers
             {
                 try
                 {
-                    var record = new GenericRecordsDB<Records>(new RecordsDBContext());
+                    var record = new GenericRecordsDB<Records>(new RecordsDBContext(new DbContextOptions<RecordsDBContext>()));
                     record.Add(new Records { Name = name, UserId = User.FindFirstValue(ClaimTypes.NameIdentifier), Year = year, Type = type, ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier) });
                     data = "Your Requested Movie " + name + " Has Been Received";
                     HttpContext.Response.Cookies.Append(cookieNameMovie, name, new CookieOptions { Expires = DateTime.Now.AddDays(1) });
@@ -169,7 +170,7 @@ namespace MoviesMafia.Controllers
         {
             if (ModelState.IsValid)
             {
-                var record = new GenericRecordsDB<Records>(new RecordsDBContext());
+                var record = new GenericRecordsDB<Records>(new RecordsDBContext(new DbContextOptions<RecordsDBContext>() ));
                 Records r = record.GetById(id);
                 r.Name = name; r.Year = year; r.Type = type; r.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier); r.ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 record.Update(r);
@@ -179,7 +180,7 @@ namespace MoviesMafia.Controllers
         [Authorize]
         public IActionResult EditRecord(int id)
         {
-            GenericRecordsDB<Records> record = new GenericRecordsDB<Records>(new RecordsDBContext());
+            GenericRecordsDB<Records> record = new GenericRecordsDB<Records>(new RecordsDBContext(new DbContextOptions<RecordsDBContext>()));
             Records r = record.GetById(id);
             return View("EditRecord", r);
         }

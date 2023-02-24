@@ -1,22 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using MoviesMafia.Models.Repo;
 
 namespace MoviesMafia.Models.GenericRepo
 {
     public class RecordsDBContext : Microsoft.EntityFrameworkCore.DbContext
     {
-        public RecordsDBContext()
+        public RecordsDBContext(DbContextOptions<RecordsDBContext> options) : base(options)
         {
             
         }
 
         public DbSet<Records> Records { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql("Server=containers-us-west-67.railway.app;Port=7349;Database=railway;User Id=postgres;Password=DYhmU2HXwP5zzPNEkFX0");
-        }
+        }*/
         public override int SaveChanges()
         {
             var entries = ChangeTracker

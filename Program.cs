@@ -5,7 +5,13 @@ using MoviesMafia.Models.GenericRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 //Getting Connection string
-string connString = builder.Configuration.GetConnectionString("DefaultConnection");
+string PGHOST = Environment.GetEnvironmentVariable("PGHOST");
+string PGPORT = Environment.GetEnvironmentVariable("PGPORT");
+string PGDATABASE = Environment.GetEnvironmentVariable("PGDATABASE");
+string PGUSER = Environment.GetEnvironmentVariable("PGUSER");
+string PGPASSWORD = Environment.GetEnvironmentVariable("PGPASSWORD");
+
+string connString = $"Server={PGHOST};Port={PGPORT};Database={PGDATABASE};User Id={PGUSER};Password={PGPASSWORD}";
 
 
 //Getting Assembly Name
@@ -15,7 +21,9 @@ var migrationAssembly = typeof(Program).Assembly.GetName().Name;
 
 builder.Services.AddDbContext<UserContext>(options =>
 options.UseNpgsql(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
-builder.Services.AddDbContext<RecordsDBContext>();
+
+builder.Services.AddDbContext<RecordsDBContext>(options=>options.UseNpgsql(connString));
+
 builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = true);
 builder.Services.AddIdentity<ExtendedIdentityUser, IdentityRole>().AddEntityFrameworkStores<UserContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<IUserRepo, UserRepo>();

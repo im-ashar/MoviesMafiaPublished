@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MoviesMafia.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20230224161122_UsersDB")]
+    [Migration("20230224170142_UsersDB")]
     partial class UsersDB
     {
         /// <inheritdoc />
