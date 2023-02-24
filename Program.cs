@@ -1,12 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MoviesMafia.Models.Repo;
-using Microsoft.AspNetCore.Http;
-using System.Net;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using MoviesMafia.Models.GenericRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 //Getting Connection string
@@ -20,8 +15,8 @@ var migrationAssembly = typeof(Program).Assembly.GetName().Name;
 
 builder.Services.AddDbContext<UserContext>(options =>
 options.UseNpgsql(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
-builder.Services.Configure<IdentityOptions>(options=>options.SignIn.RequireConfirmedEmail=true);
-
+builder.Services.AddDbContext<RecordsDBContext>();
+builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = true);
 builder.Services.AddIdentity<ExtendedIdentityUser, IdentityRole>().AddEntityFrameworkStores<UserContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 
@@ -32,10 +27,17 @@ builder.Services.AddControllersWithViews();
 
 
 
-
 var app = builder.Build();
 
 var scope = app.Services.CreateScope();
+
+var migUserContext = scope.ServiceProvider.GetRequiredService<UserContext>();
+migUserContext.Database.MigrateAsync().Wait();
+
+
+var migRecordsContext = scope.ServiceProvider.GetRequiredService<RecordsDBContext>();
+migRecordsContext.Database.MigrateAsync().Wait();
+
 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 if (!await roleManager.RoleExistsAsync("Admin"))
 {

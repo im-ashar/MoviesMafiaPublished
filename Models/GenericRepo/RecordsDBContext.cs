@@ -8,33 +8,14 @@ namespace MoviesMafia.Models.GenericRepo
     {
         public RecordsDBContext()
         {
-            try
-            {
-                var databaseCreater = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
-                if (databaseCreater != null)
-                {
-                    if (!databaseCreater.CanConnect())
-                    {
-                        databaseCreater.Create();
-                    }
-                    if (!databaseCreater.HasTables())
-                    {
-                        databaseCreater.CreateTables();
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            
         }
 
         public DbSet<Records> Records { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Server=containers-us-west-16.railway.app;Port=5625;Database=Records;User Id=postgres;Password=MgxZaCFWJo7FJr3xgcqQ");
+            optionsBuilder.UseNpgsql("Server=containers-us-west-67.railway.app;Port=7349;Database=railway;User Id=postgres;Password=DYhmU2HXwP5zzPNEkFX0");
         }
         public override int SaveChanges()
         {
