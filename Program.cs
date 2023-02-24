@@ -13,6 +13,7 @@ string PGPASSWORD = Environment.GetEnvironmentVariable("PGPASSWORD");
 
 string connString = $"Server={PGHOST};Port={PGPORT};Database={PGDATABASE};User Id={PGUSER};Password={PGPASSWORD}";
 
+//string connString = $"Server=containers-us-west-170.railway.app;Port=7506;Database=railway;User Id=postgres;Password=IRgcnnWH6vsbKvDOUtLn";
 
 //Getting Assembly Name
 var migrationAssembly = typeof(Program).Assembly.GetName().Name;
@@ -22,12 +23,12 @@ var migrationAssembly = typeof(Program).Assembly.GetName().Name;
 builder.Services.AddDbContext<UserContext>(options =>
 options.UseNpgsql(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
 
-builder.Services.AddDbContext<RecordsDBContext>(options=>options.UseNpgsql(connString));
+builder.Services.AddDbContext<RecordsDBContext>(options=>options.UseNpgsql(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
 
 builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = true);
 builder.Services.AddIdentity<ExtendedIdentityUser, IdentityRole>().AddEntityFrameworkStores<UserContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
-
+builder.Services.AddScoped(typeof(IGenericRecordsDB<>), typeof(GenericRecordsDB<>));
 builder.Services.AddServerSideBlazor();
 
 // Add additional services, etc.

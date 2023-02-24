@@ -11,10 +11,11 @@ namespace MoviesMafia.Controllers
     public class AccountController : Controller
     {
         private readonly IUserRepo _userRepo;
-
-        public AccountController(IUserRepo userRepo)
+        private readonly IGenericRecordsDB<Records> _recordsRepo;
+        public AccountController(IUserRepo userRepo, IGenericRecordsDB<Records> recordsRepo)
         {
             _userRepo = userRepo;
+            _recordsRepo = recordsRepo;
         }
 
         [HttpPost]
@@ -118,9 +119,9 @@ namespace MoviesMafia.Controllers
             var ProfilePicturePath = _userRepo.GetUserProfilePicture(User.Identity.Name);
             var extension = Path.GetExtension(ProfilePicturePath);
             ViewBag.ProfilePicturePath = User.Identity.Name + extension;
-            var movie = new GenericRecordsDB<Records>(new RecordsDBContext(new DbContextOptions<RecordsDBContext>()));
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var list = movie.GetByUserId(userId);
+            var list = _recordsRepo.GetRecordsByUserId(userId);
             var tuple = new Tuple<List<Records>, UpdateUserModel>(list, new UpdateUserModel());
 
             return View(tuple);
@@ -131,10 +132,10 @@ namespace MoviesMafia.Controllers
         {
             ViewBag.EmailData = _userRepo.GetUserEmail(User.Identity.Name);
             Records del = System.Text.Json.JsonSerializer.Deserialize<Records>(deleteButton);
-            var delete = new GenericRecordsDB<Records>(new RecordsDBContext(new DbContextOptions<RecordsDBContext>()));
-            delete.Delete(del);
+
+            _recordsRepo.Delete(del);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var list = delete.GetByUserId(userId);
+            var list = _recordsRepo.GetRecordsByUserId(userId);
             return RedirectToAction("Profile", list);
         }
 
@@ -151,8 +152,8 @@ namespace MoviesMafia.Controllers
             {
                 try
                 {
-                    var record = new GenericRecordsDB<Records>(new RecordsDBContext(new DbContextOptions<RecordsDBContext>()));
-                    record.Add(new Records { Name = name, UserId = User.FindFirstValue(ClaimTypes.NameIdentifier), Year = year, Type = type, ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier) });
+
+                    _recordsRepo.Add(new Records { Name = name, UserId = User.FindFirstValue(ClaimTypes.NameIdentifier), Year = year, Type = type, ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier) });
                     data = "Your Requested Movie " + name + " Has Been Received";
                     HttpContext.Response.Cookies.Append(cookieNameMovie, name, new CookieOptions { Expires = DateTime.Now.AddDays(1) });
                 }
@@ -170,18 +171,17 @@ namespace MoviesMafia.Controllers
         {
             if (ModelState.IsValid)
             {
-                var record = new GenericRecordsDB<Records>(new RecordsDBContext(new DbContextOptions<RecordsDBContext>() ));
-                Records r = record.GetById(id);
+
+                Records r = _recordsRepo.GetById(id);
                 r.Name = name; r.Year = year; r.Type = type; r.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier); r.ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                record.Update(r);
+                _recordsRepo.Update(r);
             }
             return RedirectToAction("Profile");
         }
         [Authorize]
         public IActionResult EditRecord(int id)
         {
-            GenericRecordsDB<Records> record = new GenericRecordsDB<Records>(new RecordsDBContext(new DbContextOptions<RecordsDBContext>()));
-            Records r = record.GetById(id);
+            Records r = _recordsRepo.GetById(id);
             return View("EditRecord", r);
         }
         [HttpPost]
