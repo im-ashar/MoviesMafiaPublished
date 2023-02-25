@@ -244,14 +244,14 @@ namespace MoviesMafia.Controllers
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
             {
-                return BadRequest("Invalid email or token.");
+                return BadRequest("Invalid Email Or Token.");
             }
 
             var result = await _userRepo.VerifyEmail(email, token);
 
             if (result)
             {
-                object data = "EmailConfirmed";
+                object data = "Email Confirmed";
                 return View("ThankYou", data);
             }
             else
