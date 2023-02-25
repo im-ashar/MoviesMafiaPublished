@@ -166,7 +166,40 @@ namespace MoviesMafia.Models.Repo
 
             return false;
         }
-        
+        public bool UpdateProfilePicture(IFormFile updatedProfilePicture, string userName)
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", updatedProfilePicture.FileName);
+            var extension = Path.GetExtension(updatedProfilePicture.FileName);
+            var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", userName + extension);
+            var user = _userManager.FindByNameAsync(userName);
+            user.Result.ProfilePicturePath = dbPath;
+            var result = _userManager.UpdateAsync(user.Result);
+            if (result.Result.Succeeded)
+            {
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    updatedProfilePicture.CopyTo(stream);
+
+                }
+
+                var path2 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures");
+                DirectoryInfo dir = new DirectoryInfo(path2);
+                FileInfo[] files = dir.GetFiles(userName + ".*");
+                if (files.Length > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        file.Delete();
+                    }
+                }
+                File.Move(path, dbPath, true);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
 }
