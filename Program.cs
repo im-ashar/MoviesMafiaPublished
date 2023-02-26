@@ -74,8 +74,8 @@ if (adminUser == null)
         LockoutEnabled = false,
         ProfilePicturePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", "admin.jpg")
     };
-
-    var result = await userManager.CreateAsync(adminUser, "admin@Moviesmafia123");
+    var adminPassword= Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
+    var result = await userManager.CreateAsync(adminUser, adminPassword);
     if (result.Succeeded)
     {
         await userManager.AddToRoleAsync(adminUser, "Admin");
