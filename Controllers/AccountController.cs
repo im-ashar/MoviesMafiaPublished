@@ -189,6 +189,7 @@ namespace MoviesMafia.Controllers
         [HttpPost]
         public async Task<string> UpdatePassword(UpdateUserModel model)
         {
+            
             if (ModelState.IsValid)
             {
                 var user = _userRepo.GetUser(User);
@@ -263,24 +264,29 @@ namespace MoviesMafia.Controllers
 
             }
         }
+
         [Authorize]
-        public string UpdateProfilePicture(List<IFormFile> updatedProfilePicture)
+        public IActionResult UpdateProfilePicture(List<IFormFile> updatedProfilePicture)
         {
+            if(updatedProfilePicture.Count==0)
+            {
+                return BadRequest("Error");
+            }
             if (ModelState.IsValid)
             {
                 var result = _userRepo.UpdateProfilePicture(updatedProfilePicture[0], User.Identity.Name);
                 if (result)
                 {
-                    return "Profile Picture Updated Successfully";
+                    return Content("Profile Picture Updated Successfully");
                 }
                 else
                 {
-                    return "Error While Updating The Profile Picture";
+                    return Content("Error While Updating The Profile Picture");
                 }
             }
             else
             {
-                return "Error While Updating The Profile Picture";
+                return Content("Error While Updating The Profile Picture");
             }
         }
 
