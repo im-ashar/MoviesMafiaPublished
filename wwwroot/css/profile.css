@@ -203,6 +203,10 @@ header {
         display: flex;
         justify-content: center;
     }
+    .profile-image-container {
+        display:flex;
+        justify-content:center;
+    }
 }
 
 .edit-profile-button {
@@ -210,15 +214,17 @@ header {
     left: 0;
     right: 0;
     bottom: 0;
-    display: none;
+    display:none;
+    
 }
 
 .profile-image-container:hover .edit-profile-button {
-    display: block;
+    display:block;
+    
 }
-
 .profile-image-container {
     position: relative;
     overflow: hidden;
-    width: 18rem;
+    width:18rem;
 }
+
