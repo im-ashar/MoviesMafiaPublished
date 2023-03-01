@@ -1,4 +1,5 @@
 ﻿@model Tuple<List<Records>, UpdateUserModel>
+@using System.Web;
 @using MoviesMafia.Models.Repo
 @using MoviesMafia.Models.GenericRepo
 @using System.Text.Json;
@@ -7,16 +8,22 @@
 @section profilecss{
     <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
 }
+
 @{
+
     ViewBag.Title = "Profile";
+
 }
+
+}
+
 <div class="container border-2 border border-white px-0 py-0">
     <div class="container bg-dark border-bottom">
         <div class="row toprow">
 
             <div class="col dp">
                 <div class="profile-image-container">
-                    <img class="rounded-circle shadow-4-strong ms-md-4 mt-4 mb-4 "
+                    <img class="rounded-circle shadow-4-strong ms-md-4 mt-4 mb-4 NO-CACHE "
                          src="~/ProfilePictures/@ViewBag.ProfilePicturePath"
                          height="300px"
                          width="250px"
@@ -79,14 +86,13 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" id="closeBtn" data-bs-dismiss="modal">Close</button>
-                        <button type="button"  id="updatePassword" class="btn btn-danger">Update</button>
+                        <button type="button" id="updatePassword" class="btn btn-danger">Update</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
     <!--Modal For Updating Password-->
-
     <!-- Modal For Updating ProfilePicture -->
     <div class="modal fade text-light" id="updateProfilePicture" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class=" modal-dialog modal-dialog-centered">
@@ -97,7 +103,7 @@
                 </div>
                 <form class="text-light" EncType="multipart/form-data">
                     <div class="modal-body">
-                        <input type="file" id="updateProfilePictureInput"/>
+                        <input type="file" id="updateProfilePictureInput" />
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" id="closeDpBtn" data-bs-dismiss="modal">Close</button>

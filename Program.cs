@@ -5,15 +5,15 @@ using MoviesMafia.Models.GenericRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 //Getting Connection string
-string PGHOST = Environment.GetEnvironmentVariable("PGHOST");
+/*string PGHOST = Environment.GetEnvironmentVariable("PGHOST");
 string PGPORT = Environment.GetEnvironmentVariable("PGPORT");
 string PGDATABASE = Environment.GetEnvironmentVariable("PGDATABASE");
 string PGUSER = Environment.GetEnvironmentVariable("PGUSER");
 string PGPASSWORD = Environment.GetEnvironmentVariable("PGPASSWORD");
 
-string connString = $"Server={PGHOST};Port={PGPORT};Database={PGDATABASE};User Id={PGUSER};Password={PGPASSWORD}";
+string connString = $"Server={PGHOST};Port={PGPORT};Database={PGDATABASE};User Id={PGUSER};Password={PGPASSWORD}";*/
 
-//string connString = $"Server=containers-us-west-125.railway.app;Port=6479;Database=railway;User Id=postgres;Password=2Y6lNRRNyVye5VhTRIFa";
+string connString = $"Server=containers-us-west-125.railway.app;Port=6479;Database=railway;User Id=postgres;Password=2Y6lNRRNyVye5VhTRIFa";
 
 //Getting Assembly Name
 var migrationAssembly = typeof(Program).Assembly.GetName().Name;
